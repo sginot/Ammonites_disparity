@@ -33,7 +33,7 @@ WS <- import_jpg(jpg.paths = fil,
 # Make WS into an "Out" object (Momocs syntax)
 OutWS <- Out(WS)
 
-# Subsample qll to the sqme number of points (here 200)
+# Subsample all to the same number of points (here 200)
 cooWS <- coo_interpolate(OutWS, 
                          n=200)
 
@@ -45,7 +45,7 @@ scaleWS <- coo_scale(centerWS)
 
 # Find the point of the shape nearest to vertical line starting from center 
 ids <- coo_intersect_angle(scaleWS, 
-                           angle=pi/2) #Issues rgeos warnings but works
+                           angle=pi/2) #May issue rgeos warnings but works
 
 # Slide number of the coordinates so that the first point of each shape is
 # homologous (i.e. the upper "tip" of the shape, defined in vector ids)
