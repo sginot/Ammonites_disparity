@@ -418,6 +418,7 @@ for (i in c(1:6,8:23,25:30)) {
     # Fill the list with one matrix per biozone
   
 }
+
 #-------------------------------------------------------------------------------
 # "Jacknifing" to obtain rarefaction curves, at the INTERVAL level
 
@@ -479,7 +480,11 @@ for (i in 1:length(Interval)) {
 #-------------------------------------------------------------------------------
 # Save objects for further analyses and plots
 
-save(list = c("disparity_biozones", 
+save(list = c("SOV_intervals", 
+              "SOV_biozones", 
+              "SOR_intervals", 
+              "SOR_biozones",
+              "disparity_biozones", 
               "disparity_intervals"),
      file = "SOV_SOR_disparity.RData")
 

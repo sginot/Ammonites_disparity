@@ -232,7 +232,7 @@ plot.morph.raref2 <- function(x,
 }
 
 #-------------------------------------------------------------------------------
-# Apply new function to biozones to make chronological plots
+# Apply new function to biozones level to make chronological plots
 
 output_folder <- "../Figures/Morpho_rarefaction/"
 
@@ -254,3 +254,63 @@ plot.morph.raref2(x = raref_SOR_ord,
                   non.raref.values = SOR_ord)
 
 dev.off()
+
+#-------------------------------------------------------------------------------
+# Same for interval level
+
+cols <- viridis(n = 7)
+  # Define a color palette with sufficient number of colors
+
+pdf(paste(output_folder,
+          "Morpho_raref_SOR_intervals.pdf"), 
+    width = 10, 
+    height = 3)
+
+plot.morph.raref2(x = rarefSOR_intervals, 
+                  cols = cols,
+                  names.bins = Interval,
+                  non.raref.values = SOR_intervals)
+
+dev.off()
+
+#-------------------------------------------------------------------------------
+# Similar plots can be done for the sum of variance (SOV)
+
+# At the biozones level
+
+cols <- viridis(n = 30)
+
+raref_SOV_ord <- rarefSOV_biozones[ord]
+SOV_ord <- SOV_biozones[ord]
+  # Order variables in CHRONOLOGICAL ORDER
+
+pdf(paste(output_folder,
+          "Morpho_raref_SOV_biozones.pdf"), 
+    width = 40, 
+    height = 3)
+
+plot.morph.raref2(x = raref_SOV_ord, 
+                  cols = cols,
+                  names.bins = Biozones[ord],
+                  non.raref.values = SOV_ord)
+
+dev.off()
+
+# At the interval level
+
+cols <- viridis(n = 7)
+
+pdf(paste(output_folder,
+          "Morpho_raref_SOV_intervals.pdf"), 
+    width = 10, 
+    height = 3)
+
+plot.morph.raref2(x = rarefSOV_intervals, 
+                  cols = cols,
+                  names.bins = Interval,
+                  non.raref.values = SOV_intervals)
+
+dev.off()
+
+#-------------------------------------------------------------------------------
+# END OF SCRIPT
