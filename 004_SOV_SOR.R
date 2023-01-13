@@ -9,18 +9,9 @@ NA
 
 #-------------------------------------------------------------------------------
 # Load objects produced in script 001 and 002
-
 load("PCA_Whorl_sections.RData")
 load("taxa_lists_time_bins.RData")
 load("variables_and_data_whorl_sections.RData")
-
-#-------------------------------------------------------------------------------
-# Define proper chronological order of biozones
-
-ord <- c(24, 11, 7, 15, 18, 13, 16, 26, 5, 6, 12, 23, 28, 9, 10, 3, 20, 4, 14,
-         8, 27, 25, 2, 1, 22, 19, 17, 29, 30, 21)
-  # This vector gathers the indices of biozones to reorder them from
-  # alphabetical order to chronological order
 
 #-------------------------------------------------------------------------------
 # Compute sum of variances (SOV) for each biozone, and store them in vector
