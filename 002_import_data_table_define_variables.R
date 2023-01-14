@@ -54,8 +54,8 @@ for (i in 1:length(Biozones)) {
 
 ord <- c(24, 11, 7, 15, 18, 13, 16, 26, 5, 6, 12, 23, 28, 9, 10, 3, 20, 4, 14,
          8, 27, 25, 2, 1, 22, 19, 17, 29, 30, 21)
-# This vector gathers the indices of biozones to reorder them from
-# alphabetical order to chronological order
+  # This vector gathers the indices of biozones to reorder them from
+  # alphabetical order to chronological order
 
 #-------------------------------------------------------------------------------
 # Define which taxa are present in each time bin (INTERVAL level)
