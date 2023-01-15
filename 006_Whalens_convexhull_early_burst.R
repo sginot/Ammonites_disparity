@@ -142,17 +142,22 @@ for (it in 1:iter) {
 }
 
 #-------------------------------------------------------------------------------
-# Basic plot
+# Compute the residual convex hull area, by subtracting the median of null model
+# from actual values and from null model distribution
+
+null_median <- apply(null_CH_Area_biozones[,ord], 
+                     2, 
+                     median)
 
 q95 <- apply(null_CH_Area_biozones[,ord], 
-      2, 
-      quantile, 
-      probs = 0.95)
+             2, 
+             quantile, 
+             probs = 0.95)
 
 q5 <- apply(null_CH_Area_biozones[,ord], 
-      2, 
-      quantile,
-      probs = 0.05)
+            2, 
+            quantile,
+            probs = 0.05)
 
 q75 <- apply(null_CH_Area_biozones[,ord], 
              2, 
@@ -160,17 +165,33 @@ q75 <- apply(null_CH_Area_biozones[,ord],
              probs = 0.75)
 
 q25 <- apply(null_CH_Area_biozones[,ord], 
-            2, 
-            quantile,
-            probs = 0.25)
+             2, 
+             quantile,
+             probs = 0.25)
 
+CHA <- CH_Area_biozones[ord]
+
+res_CHA <- CHA - null_median
+
+res_q5 <- q5 - null_median
+res_q25 <- q25 - null_median
+res_q75 <- q75 - null_median
+res_q95 <- q95 - null_median
+
+#-------------------------------------------------------------------------------
+# Basic plot
 
 plot(1:30, 
-     CH_Area_biozones[ord], 
+     CHA, 
      type = "b", 
      lwd = 3, 
      pch = 19, 
      ylim = c(-0.1, 1))
+
+lines(1:30,
+      null_median,
+      col = cols[1],
+      lty = 2)
 
 polygon(c(1:30, 30:1), 
         c(q5, rev(q95)), 
@@ -182,3 +203,25 @@ polygon(c(1:30, 30:1),
         col = alpha(cols[1], 
                     alpha = 0.2),
         border = NA)
+
+#-------------------------------------------------------------------------------
+# Residual plot
+
+plot(1:30, 
+     res_CHA, 
+     type = "b", 
+     lwd = 3, 
+     pch = 19, 
+     ylim = c(-0.3, 0.3))
+
+polygon(c(1:30, 30:1), 
+        c(res_q5, rev(res_q95)), 
+        col = alpha(cols[1], 
+                    alpha = 0.2))
+
+polygon(c(1:30, 30:1), 
+        c(res_q25, rev(res_q75)), 
+        col = alpha(cols[1], 
+                    alpha = 0.2),
+        border = NA)
+
