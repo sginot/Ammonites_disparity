@@ -23,7 +23,6 @@ for (i in 1:length(Biozones)) {
   
   tryCatch({
     # tryCatch avoids the loop from stopping when there are not enough points
-    # to compute variance.
     
     submorphospace <- pca$x[match(list.taxa.biozones[[i]], 
                                   levels(Ap.Image)),]
@@ -51,6 +50,214 @@ for (i in 1:length(Biozones)) {
       # Ratio of positions to centroid over position to center of space
     
     error = function(a) {return(NA)})
-  # If variances could not be computed, functions returns NA
+  # If indices could not be computed, functions returns NA
   
 }
+  # Something is wrong in the formulation here, although it should be the way to
+  # compute that index according to Table 3 of Guillerme et al. 2020
+  
+# The problem stems from the fact that the sum of "pos2cent" must necessarily be
+# 0 because the centroid is already the average of the points' positions
+
+#-------------------------------------------------------------------------------
+# Compute position in a different way, simply by distance of centroid to center
+# of morphospace.
+
+pos_biozones <- rep(NA,
+                   length(Biozones))
+# Make empty vector to store results
+
+for (i in 1:length(Biozones)) {
+  
+  tryCatch({
+    # tryCatch avoids the loop from stopping when there are not enough points
+    # to compute variance.
+    
+    submorphospace <- pca$x[match(list.taxa.biozones[[i]], 
+                                  levels(Ap.Image)),]
+    # Select data to compute index: all species present in biozone [i] x
+    # all PCs
+    
+    centroid <- apply(submorphospace, 
+                      2,
+                      mean)
+    # Compute centroid for all observations of biozone [i]
+    
+    center <- rep(0, 
+                  length(centroid))
+    # Center of global morphospace is 0,0,0,0,...
+    
+    pos_biozones[i] <- dist(rbind(centroid, 
+                                  center))},
+    # Ratio of positions to centroid over position to center of space
+    
+    error = function(a) {return(NA)})
+  # If indices could not be computed, functions returns NA
+  
+}
+
+#-------------------------------------------------------------------------------
+# Compute distance of centroid to center for intervals.
+
+pos_intervals <- rep(NA,
+                    length(Interval))
+# Make empty vector to store results
+
+for (i in 1:length(Interval)) {
+  
+  tryCatch({
+
+    submorphospace <- pca$x[match(list.taxa.intervals[[i]], 
+                                  levels(Ap.Image)),]
+
+    centroid <- apply(submorphospace, 
+                      2,
+                      mean)
+    # Compute centroid for all observations of biozone [i]
+    
+    center <- rep(0, 
+                  length(centroid))
+    # Center of global morphospace is 0,0,0,0,...
+    
+    pos_intervals[i] <- dist(rbind(centroid, 
+                                  center))},
+    # Ratio of positions to centroid over position to center of space
+    
+    error = function(a) {return(NA)})
+  # If indices could not be computed, functions returns NA
+  
+}
+
+#-------------------------------------------------------------------------------
+# Compute bootstrapped confidence intervals for position
+
+bootpos_biozones <- list()
+# Make empty list to be filled with pseudo-values for each time bin
+
+for (i in 1:length(Biozones)) {
+  
+  tryCatch({
+    # tryCatch avoids the loop from crashing when there are not enough points
+    # to compute ranges or variances
+    
+    submorphospace <- pca$x[match(list.taxa.biozones[[i]], 
+                                  levels(Ap.Image)),]
+    # Data frame containing data for all species present in biozone [i]
+    
+    bootpos <- rep(NA, 1000)
+    # Empty vectors to record pseudo-values (1000 iterations)
+    
+    for (j in 1:1000) {
+      
+      bootspace <- submorphospace[sample(nrow(submorphospace), 
+                                         replace = T),]
+      # Resample with replacement species among species present within
+      # biozone [i]
+      
+      centroid <- apply(bootspace, 
+                        2,
+                        mean)
+
+      center <- rep(0, 
+                    length(centroid))
+      
+      bootpos[j] <- dist(rbind(centroid, 
+                               center))
+     
+    }
+    
+    bootpos_biozones[[i]] <- bootpos}, 
+    
+    error = function(a) {return(NA)})
+}
+
+
+
+
+sbootpos_biozones <- lapply(bootpos_biozones, 
+                            sort)
+# Sort pseudo-values in increasing order within all biozone
+
+upCI_pos_biozones <- 
+  loCI_pos_biozones <- 
+  rep(NA, length(Biozones))
+# Make empty vectors to store confidence interval (CI) values
+
+
+for (i in c(1:6,8:23,25:30)) {
+  # Biozones 7 and 24 do not have any values due to small sample size
+  
+  upCI_pos_biozones[i] <- sbootpos_biozones[[i]][975]
+  loCI_pos_biozones[i] <- sbootpos_biozones[[i]][25]
+  # To obtain bilateral 95% CI, the 50 most extreme values are excluded,
+  # therefore 25 values on each side of distribution
+}
+
+#-------------------------------------------------------------------------------
+# Do the same for intervals
+
+bootpos_int <- list()
+
+for (i in 1:length(Interval)) {
+  
+  tryCatch({
+    
+    submorphospace <- pca$x[match(list.taxa.intervals[[i]], 
+                                  levels(Ap.Image)),]
+
+    bootpos <- rep(NA, 1000)
+
+    for (j in 1:1000) {
+      
+      bootspace <- submorphospace[sample(nrow(submorphospace), 
+                                         replace = T),]
+
+      centroid <- apply(bootspace, 
+                        2,
+                        mean)
+      
+      center <- rep(0, 
+                    length(centroid))
+      
+      bootpos[j] <- dist(rbind(centroid, 
+                               center))
+      
+    }
+    
+    bootpos_int[[i]] <- bootpos}, 
+    
+    error = function(a) {return(NA)})
+}
+
+
+sbootpos_int <- lapply(bootpos_int, 
+                            sort)
+
+upCI_pos_int <- 
+  loCI_pos_int <- 
+  rep(NA, length(Interval))
+
+for (i in 1:length(Interval)) {
+
+  upCI_pos_int[i] <- sbootpos_int[[i]][975]
+  loCI_pos_int[i] <- sbootpos_int[[i]][25]
+  # To obtain bilateral 95% CI, the 50 most extreme values are excluded,
+  # therefore 25 values on each side of distribution
+}
+
+#-------------------------------------------------------------------------------
+# Save objects for later analyses and plotting
+
+position_intervals <- data.frame(Position = pos_intervals, 
+                                 upCI = upCI_pos_int, 
+                                 loCI = loCI_pos_int)
+
+position_biozones <- data.frame(Position = pos_biozones, 
+                                 upCI = upCI_pos_biozones, 
+                                 loCI = loCI_pos_biozones,
+                                 row.names = Biozones)
+
+save(list = c("position_biozones", 
+              "position_intervals"),
+     file = "position_centroid.RData")
+
