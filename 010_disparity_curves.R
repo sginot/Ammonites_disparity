@@ -38,14 +38,23 @@ global_intervals <- data.frame(disparity_intervals,
 global_biozones <- global_biozones[ord,]
 
 #-------------------------------------------------------------------------------
-# Plots
+# Combined curves plots
 
 g <- global_biozones
   # For simplification purposes
 
 x.coo <- c(1:30, 30:1)
+  # For simplification purposes
 
-layout(matrix(1:6, nrow = 6))
+output_folder <- "../Figures/"
+
+pdf(file = paste(output_folder,
+                 "all_curves_biozones.pdf"),
+    width = 7,
+    height = 14)
+
+layout(matrix(c(1:7, 7), 
+              nrow = 8))
 
 par(mar = c(0, 5, 0, 5))
 
@@ -155,7 +164,7 @@ plot(g$CH_Area_biozones,
 
 points(g$upCI_CHA_biozones,
        pch = "-",
-       col = "blue", cex = 3)
+       col = "blue")
 points(g$loCI_CHA_biozones,
        pch = "-",
        col = "blue")
@@ -187,4 +196,24 @@ polygon(x.coo,
         c(g$upCI,
           rev(g$loCI)),
         border = NA,
-        col = alpha("blue", alpha = 0.2))   
+        col = alpha("blue", alpha = 0.2)) 
+
+# 7 - biozones names
+
+par(mar = c(24, 5, 0, 5))
+
+plot(1:30, rep(0, 30), 
+     type = "n",
+     bty = "n",
+     yaxt = "n",
+     xaxt = "n",
+     ylab = "",
+     xlab = "")
+
+axis(side = 1, 
+     at = 1:30, 
+     labels = Biozones, 
+     las = 2)
+
+dev.off()
+
