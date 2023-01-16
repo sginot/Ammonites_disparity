@@ -277,3 +277,5 @@ save(list = c("distances_biozones",
               "distances_intervals"),
      file = "disparity_distances.RData")
 
+#-------------------------------------------------------------------------------
+# END OF SCRIPT

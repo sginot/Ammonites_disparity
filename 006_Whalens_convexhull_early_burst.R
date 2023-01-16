@@ -101,7 +101,7 @@ for (it in 1:iter) {
                                     replace = T)) 
     # Make shuffled vector of which images correspond to all observations 
   
-  CH_Areas <- rep(NA, 30)
+  CH_Areas <- rep(NA, length(Biozones))
     # Make empty vector to record results across all biozones for iteration [it] 
   
   for (i in 1:length(Biozones)) {
@@ -142,86 +142,57 @@ for (it in 1:iter) {
 }
 
 #-------------------------------------------------------------------------------
-# Compute the residual convex hull area, by subtracting the median of null model
-# from actual values and from null model distribution
+# Same for intervals
 
-null_median <- apply(null_CH_Area_biozones[,ord], 
-                     2, 
-                     median)
+iter <- 10000
+# Define number of iterqtions of resampling and computing of pseudo-values
 
-q95 <- apply(null_CH_Area_biozones[,ord], 
-             2, 
-             quantile, 
-             probs = 0.95)
+null_CH_Area_intervals <- matrix(nrow = iter,
+                                ncol = length(Interval))
 
-q5 <- apply(null_CH_Area_biozones[,ord], 
-            2, 
-            quantile,
-            probs = 0.05)
+for (it in 1:iter) {
+  
+  Ap.rand <- as.factor(sample(table.aperture$Aperture.Image,
+                              replace = T)) 
 
-q75 <- apply(null_CH_Area_biozones[,ord], 
-             2, 
-             quantile, 
-             probs = 0.75)
+  CH_Areas <- rep(NA, length(Interval))
 
-q25 <- apply(null_CH_Area_biozones[,ord], 
-             2, 
-             quantile,
-             probs = 0.25)
+  for (i in 1:length(Interval)) {
+    
+    oo <- match(list.taxa.intervals[[i]], Ap.Image)
 
-CHA <- CH_Area_biozones[ord]
+    taxa.rand <- Ap.rand[oo]
 
-res_CHA <- CHA - null_median
+    y <- pca$x[match(taxa.rand, 
+                     levels(Ap.Image)), 2] 
+    x <- pca$x[match(taxa.rand, 
+                     levels(Ap.Image)), 1]
 
-res_q5 <- q5 - null_median
-res_q25 <- q25 - null_median
-res_q75 <- q75 - null_median
-res_q95 <- q95 - null_median
-
-#-------------------------------------------------------------------------------
-# Basic plot
-
-plot(1:30, 
-     CHA, 
-     type = "b", 
-     lwd = 3, 
-     pch = 19, 
-     ylim = c(-0.1, 1))
-
-lines(1:30,
-      null_median,
-      col = cols[1],
-      lty = 2)
-
-polygon(c(1:30, 30:1), 
-        c(q5, rev(q95)), 
-        col = alpha(cols[1], 
-                    alpha = 0.2))
-
-polygon(c(1:30, 30:1), 
-        c(q25, rev(q75)), 
-        col = alpha(cols[1], 
-                    alpha = 0.2),
-        border = NA)
+    CH <- chull(x, y)
+    
+    CH_xcoo <- x[CH]
+    CH_ycoo <- y[CH]
+    
+    sp.chull <- Polygon(coords = cbind(c(CH_xcoo, CH_xcoo[1]), 
+                                       c(CH_ycoo, CH_ycoo[1])), 
+                        hole = F)
+    
+    CH_Areas[i] <- sp.chull@area
+    
+  }
+  
+  null_CH_Area_intervals[it,] <- CH_Areas
+  
+}
 
 #-------------------------------------------------------------------------------
-# Residual plot
+# Save objects for further analysis and plots
 
-plot(1:30, 
-     res_CHA, 
-     type = "b", 
-     lwd = 3, 
-     pch = 19, 
-     ylim = c(-0.3, 0.3))
+save(list = c("CH_Area_biozones", 
+              "CH_Area_intervals", 
+              "null_CH_Area_biozones", 
+              "null_CH_Area_intervals"),
+     file = "convex_hull_areas.RData")
 
-polygon(c(1:30, 30:1), 
-        c(res_q5, rev(res_q95)), 
-        col = alpha(cols[1], 
-                    alpha = 0.2))
-
-polygon(c(1:30, 30:1), 
-        c(res_q25, rev(res_q75)), 
-        col = alpha(cols[1], 
-                    alpha = 0.2),
-        border = NA)
-
+#-------------------------------------------------------------------------------
+# END OF SCRIPT

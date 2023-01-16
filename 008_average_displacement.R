@@ -261,3 +261,5 @@ save(list = c("position_biozones",
               "position_intervals"),
      file = "position_centroid.RData")
 
+#-------------------------------------------------------------------------------
+# END OF SCRIPT
