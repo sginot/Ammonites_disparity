@@ -105,7 +105,6 @@ dev.off()
 #-------------------------------------------------------------------------------
 # Residual convex hull area plot
 
-
 pdf(file = paste(output_folder, 
                  "Residual_convex_hull_area_biozones.pdf"),
     width = 7,

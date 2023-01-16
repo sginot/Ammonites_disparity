@@ -186,12 +186,70 @@ for (it in 1:iter) {
 }
 
 #-------------------------------------------------------------------------------
+# Bootstrapping data for confidence intervals of convex hull area
+
+bootCHA_biozones <- list()
+
+for (i in 1:length(Biozones)) {
+  
+  tryCatch({
+    
+    submorphospace <- pca$x[match(list.taxa.biozones[[i]], 
+                                  levels(Ap.Image)),]
+    
+    CH_Areas <- rep(NA, 1000)
+    
+    for (j in 1:1000) {
+      
+      bootspace <- submorphospace[sample(nrow(submorphospace), 
+                                         replace = T),]
+      
+      x <- bootspace[, 1]
+      
+      y <- bootspace[, 2]
+      
+      CH <- chull(x, y)
+      
+      CH_xcoo <- x[CH]
+      CH_ycoo <- y[CH]
+      
+      sp.chull <- Polygon(coords = cbind(c(CH_xcoo, CH_xcoo[1]), 
+                                         c(CH_ycoo, CH_ycoo[1])), 
+                          hole = F)
+      
+      CH_Areas[j] <- sp.chull@area
+      
+    }
+    
+    bootCHA_biozones[[i]] <- CH_Areas}, 
+    
+    error = function(a) {return(NA)})
+}
+
+sbootCHA_biozones <- lapply(bootCHA_biozones, sort)
+
+upCI_CHA_biozones <- 
+  loCI_CHA_biozones <- 
+  rep(NA, length(Biozones))
+
+for (i in c(1:6,8:23,25:30)) {
+  
+  upCI_CHA_biozones[i] <- sbootCHA_biozones[[i]][975]
+  loCI_CHA_biozones[i] <- sbootCHA_biozones[[i]][25]
+  
+}
+
+#-------------------------------------------------------------------------------
 # Save objects for further analysis and plots
 
 save(list = c("CH_Area_biozones", 
+              "upCI_CHA_biozones",
+              "loCI_CHA_biozones",
               "CH_Area_intervals", 
               "null_CH_Area_biozones", 
-              "null_CH_Area_intervals"),
+              "null_CH_Area_intervals",
+              "upCI_CHA_biozones",
+              "loCI_CHA_biozones"),
      file = "convex_hull_areas.RData")
 
 #-------------------------------------------------------------------------------

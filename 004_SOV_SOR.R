@@ -336,7 +336,7 @@ disparity_biozones <- data.frame(SOV = SOV_biozones,
                                  SOV_loCI = loCI_SOV,
                                  SOR = SOR_biozones,
                                  SOR_upCI = upCI_SOR,
-                                 SIR_loCI = loCI_SOR,
+                                 SOR_loCI = loCI_SOR,
                                  row.names = Biozones)
 
 # Same at interval level
@@ -346,7 +346,7 @@ disparity_intervals <- data.frame(SOV = SOV_intervals,
                                  SOV_loCI = loCI_SOV_int,
                                  SOR = SOR_intervals,
                                  SOR_upCI = upCI_SOR_int,
-                                 SIR_loCI = loCI_SOR_int,
+                                 SOR_loCI = loCI_SOR_int,
                                  row.names = Interval)
 
 #-------------------------------------------------------------------------------
