@@ -135,7 +135,7 @@ legend("topleft",
                alpha(cols[1], alpha = 0.4)),
        lwd = c(3, 3, 3),
        legend = c("Residual convex hull area",
-                  "Residual 95% envelope of null model",
+                  "Residual 90% envelope of null model",
                   "Residual 50% envelope of null model"))
 
 dev.off()
@@ -250,12 +250,11 @@ polygon(c(1:7, 7:1),
         border = NA)
 
 legend("topleft",
-       lty = c(1, 2, 1, 1),
-       col = c("black", 
-               "black", 
+       lty = c(1, 1, 1),
+       col = c("black",
                alpha(cols[1], alpha = 0.2),
                alpha(cols[1], alpha = 0.4)),
-       lwd = c(3, 1, 3, 3),
+       lwd = c(3, 3, 3),
        legend = c("Residual convex hull area",
                   "Residual 90% envelope of null model",
                   "Residual 50% envelope of null model"))

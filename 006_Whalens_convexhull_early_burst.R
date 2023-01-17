@@ -17,6 +17,7 @@ library(scales)
 # Load necessary objects from previous scripts
 load("PCA_Whorl_sections.RData")
 load("taxa_lists_time_bins.RData")
+load("variables_and_data_whorl_sections.RData")
 
 #-------------------------------------------------------------------------------
 # Compute convex hull area for all biozones
@@ -145,7 +146,7 @@ for (it in 1:iter) {
 # Same for intervals
 
 iter <- 10000
-# Define number of iterqtions of resampling and computing of pseudo-values
+# Define number of iterations of resampling and computing of pseudo-values
 
 null_CH_Area_intervals <- matrix(nrow = iter,
                                 ncol = length(Interval))
@@ -240,6 +241,60 @@ for (i in c(1:6,8:23,25:30)) {
 }
 
 #-------------------------------------------------------------------------------
+# Bootstrapping data at interval level
+
+bootCHA_intervals <- list()
+
+for (i in 1:length(Interval)) {
+  
+  tryCatch({
+    
+    submorphospace <- pca$x[match(list.taxa.intervals[[i]], 
+                                  levels(Ap.Image)),]
+    
+    CH_Areas <- rep(NA, 1000)
+    
+    for (j in 1:1000) {
+      
+      bootspace <- submorphospace[sample(nrow(submorphospace), 
+                                         replace = T),]
+      
+      x <- bootspace[, 1]
+      
+      y <- bootspace[, 2]
+      
+      CH <- chull(x, y)
+      
+      CH_xcoo <- x[CH]
+      CH_ycoo <- y[CH]
+      
+      sp.chull <- Polygon(coords = cbind(c(CH_xcoo, CH_xcoo[1]), 
+                                         c(CH_ycoo, CH_ycoo[1])), 
+                          hole = F)
+      
+      CH_Areas[j] <- sp.chull@area
+      
+    }
+    
+    bootCHA_intervals[[i]] <- CH_Areas}, 
+    
+    error = function(a) {return(NA)})
+}
+
+sbootCHA_intervals <- lapply(bootCHA_intervals, sort)
+
+upCI_CHA_intervals <- 
+  loCI_CHA_intervals <- 
+  rep(NA, length(Interval))
+
+for (i in 1:length(Interval)) {
+  
+  upCI_CHA_intervals[i] <- sbootCHA_intervals[[i]][975]
+  loCI_CHA_intervals[i] <- sbootCHA_intervals[[i]][25]
+  
+}
+
+#-------------------------------------------------------------------------------
 # Save objects for further analysis and plots
 
 save(list = c("CH_Area_biozones", 
@@ -248,8 +303,8 @@ save(list = c("CH_Area_biozones",
               "CH_Area_intervals", 
               "null_CH_Area_biozones", 
               "null_CH_Area_intervals",
-              "upCI_CHA_biozones",
-              "loCI_CHA_biozones"),
+              "upCI_CHA_intervals",
+              "loCI_CHA_intervals"),
      file = "convex_hull_areas.RData")
 
 #-------------------------------------------------------------------------------

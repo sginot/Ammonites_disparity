@@ -10,7 +10,7 @@ library(scales)
 library(viridis)
 
 #-------------------------------------------------------------------------------
-# Load objects produced in script 001 and 002
+# For WHORL SECTION ANALYSES, load objects produced in script 001 and 002 
 
 load("PCA_Whorl_sections.RData")
 load("taxa_lists_time_bins.RData")
@@ -18,7 +18,7 @@ load("variables_and_data_whorl_sections.RData")
 
 #-------------------------------------------------------------------------------
 # Original plot: visual inspection is necessary if script 001 has been run for
-# the first time. 
+# the first time.
 # In some cases an outlier shape may appear, due to slight noise in the 
 # interpolation of shapes causing the first landmark not to align
 # with those of the other shapes (therefore starting from an non-homologous 
