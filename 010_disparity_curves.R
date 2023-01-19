@@ -40,6 +40,8 @@ global_intervals <- data.frame(disparity_intervals,
 
 global_biozones <- global_biozones[ord,]
 
+Biozones <- Biozones[ord]
+
 #-------------------------------------------------------------------------------
 # Write data frames as CSV
 
@@ -50,12 +52,32 @@ write.csv(global_intervals,
           file = "disparities_intervals.csv")
 
 #-------------------------------------------------------------------------------
+# Load time bin data and produce vectors to use them as x coordinates in the 
+# plots
+
+biozones_ages <- read.csv("biozones_dates.csv",
+                          h = T,
+                          sep= ",",
+                          dec = ".")
+
+intervals_ages <- read.csv("intervals_dates.csv",
+                          h = T,
+                          sep= ",",
+                          dec = ".")
+
+middle_biozones <- biozones_ages$age_base - biozones_ages$duration / 2
+
+middle_intervals <- intervals_ages$age_base - intervals_ages$duration / 2
+
+#-------------------------------------------------------------------------------
 # Combined curves plots for biozones
 
 g <- global_biozones
   # For simplification purposes
 
-x.coo <- c(1:30, 30:1)
+x <- -rev(middle_biozones)
+x.base <- -rev(biozones_ages$age_base)
+x.coo <- c(x, rev(x))
   # For simplification purposes
 
 output_folder <- "../Figures/"
@@ -72,7 +94,8 @@ par(mar = c(0, 5, 0, 5))
 
 # 1 - SOV (all PCs)
 
-plot(g$SOV,
+plot(x = x,
+     y = g$SOV,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -80,10 +103,16 @@ plot(g$SOV,
      ylim = c(min(g$SOV_loCI, na.rm = T),
               max(g$SOV_upCI, na.rm = T)))
 
-points(g$SOV_upCI,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$SOV_upCI,
        pch = "-",
        col = "blue")
-points(g$SOV_loCI,
+points(x = x,
+       g$SOV_loCI,
        pch = "-",
        col = "blue")
 
@@ -95,7 +124,8 @@ polygon(x.coo,
      
 # 2 - Mean squared distance to centroid (all PCs)
 
-plot(g$Centroid_dist,
+plot(x = x,
+     y = g$Centroid_dist,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -103,7 +133,12 @@ plot(g$Centroid_dist,
      ylim = c(min(g$loCI_cdist, na.rm = T),
               max(g$upCI_cdist, na.rm = T)))
 
-points(g$upCI_cdist,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$upCI_cdist,
        pch = "-",
        col = "blue")
 points(g$loCI_cdist,
@@ -119,7 +154,8 @@ polygon(x.coo,
 
 # 3 - Mean pairwise distance (all PCs)
 
-plot(g$Pairwise_dist,
+plot(x = x,
+     y = g$Pairwise_dist,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -127,10 +163,16 @@ plot(g$Pairwise_dist,
      ylim = c(min(g$loCI_mID, na.rm = T),
               max(g$upCI_mID, na.rm = T)))
 
-points(g$upCI_mID,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$upCI_mID,
        pch = "-",
        col = "blue")
-points(g$loCI_mID,
+points(x = x,
+       g$loCI_mID,
        pch = "-",
        col = "blue")
 
@@ -143,7 +185,8 @@ polygon(x.coo,
 
 # 4 - SOR (all PCs)
 
-plot(g$SOR,
+plot(x = x,
+     y = g$SOR,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -151,10 +194,16 @@ plot(g$SOR,
      ylim = c(min(g$SOR_loCI, na.rm = T),
               max(g$SOR_upCI, na.rm = T)))
 
-points(g$SOR_upCI,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$SOR_upCI,
        pch = "-",
        col = "blue")
-points(g$SOR_loCI,
+points(x = x,
+       y = g$SOR_loCI,
        pch = "-",
        col = "blue")
 
@@ -166,7 +215,8 @@ polygon(x.coo,
 
 # 5 - Convex hull area (PC1-2 only)
 
-plot(g$CH_Area_biozones,
+plot(x = x,
+     y = g$CH_Area_biozones,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -174,10 +224,16 @@ plot(g$CH_Area_biozones,
      ylim = c(min(g$loCI_CHA_biozones, na.rm = T),
               max(g$upCI_CHA_biozones, na.rm = T)))
 
-points(g$upCI_CHA_biozones,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$upCI_CHA_biozones,
        pch = "-",
        col = "blue")
-points(g$loCI_CHA_biozones,
+points(x = x,
+       y = g$loCI_CHA_biozones,
        pch = "-",
        col = "blue")
 
@@ -189,7 +245,8 @@ polygon(x.coo,
 
 # 6 - Distance of centroid to center of plot
 
-plot(g$Position,
+plot(x = x,
+     y = g$Position,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -197,10 +254,16 @@ plot(g$Position,
      ylim = c(min(g$loCI, na.rm = T),
               max(g$upCI, na.rm = T)))
 
-points(g$upCI,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$upCI,
        pch = "-",
        col = "blue")
-points(g$loCI,
+points(x = x,
+       y = g$loCI,
        pch = "-",
        col = "blue")
 
@@ -214,7 +277,7 @@ polygon(x.coo,
 
 par(mar = c(24, 5, 0, 5))
 
-plot(1:30, rep(0, 30), 
+plot(x, rep(0, 30), 
      type = "n",
      bty = "n",
      yaxt = "n",
@@ -223,8 +286,14 @@ plot(1:30, rep(0, 30),
      xlab = "")
 
 axis(side = 1, 
-     at = 1:30, 
-     labels = Biozones[ord], 
+     at = x.base,
+     labels = F,
+     lwd = 2)
+
+axis(side = 1, 
+     at = x, 
+     labels = Biozones,
+     tick = F,
      las = 2)
 
 dev.off()
@@ -234,7 +303,12 @@ dev.off()
 
 g <- global_intervals
 
-x.coo <- c(1:7, 7:1)
+Intervals <- rev(intervals_ages$names)
+
+x <- -rev(middle_intervals)
+x.base <- -rev(intervals_ages$age_base)
+x.coo <- c(x, rev(x))
+# For simplification purposes
 
 output_folder <- "../Figures/"
 
@@ -250,7 +324,8 @@ par(mar = c(0, 5, 0, 5))
 
 # 1 - SOV (all PCs)
 
-plot(g$SOV,
+plot(x = x,
+     y = g$SOV,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -258,10 +333,16 @@ plot(g$SOV,
      ylim = c(min(g$SOV_loCI, na.rm = T),
               max(g$SOV_upCI, na.rm = T)))
 
-points(g$SOV_upCI,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$SOV_upCI,
        pch = "-",
        col = "blue")
-points(g$SOV_loCI,
+points(x = x,
+       y = g$SOV_loCI,
        pch = "-",
        col = "blue")
 
@@ -273,7 +354,8 @@ polygon(x.coo,
 
 # 2 - Mean squared distance to centroid (all PCs)
 
-plot(g$Centroid_dist,
+plot(x = x,
+     y = g$Centroid_dist,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -281,10 +363,16 @@ plot(g$Centroid_dist,
      ylim = c(min(g$loCI_cdist, na.rm = T),
               max(g$upCI_cdist, na.rm = T)))
 
-points(g$upCI_cdist,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$upCI_cdist,
        pch = "-",
        col = "blue")
-points(g$loCI_cdist,
+points(x = x,
+       y = g$loCI_cdist,
        pch = "-",
        col = "blue")
 
@@ -297,7 +385,8 @@ polygon(x.coo,
 
 # 3 - Mean pairwise distance (all PCs)
 
-plot(g$Pairwise_dist,
+plot(x = x,
+     y = g$Pairwise_dist,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -305,10 +394,16 @@ plot(g$Pairwise_dist,
      ylim = c(min(g$loCI_mID, na.rm = T),
               max(g$upCI_mID, na.rm = T)))
 
-points(g$upCI_mID,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$upCI_mID,
        pch = "-",
        col = "blue")
-points(g$loCI_mID,
+points(x = x,
+       y = g$loCI_mID,
        pch = "-",
        col = "blue")
 
@@ -321,7 +416,8 @@ polygon(x.coo,
 
 # 4 - SOR (all PCs)
 
-plot(g$SOR,
+plot(x = x,
+     y = g$SOR,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -329,10 +425,16 @@ plot(g$SOR,
      ylim = c(min(g$SOR_loCI, na.rm = T),
               max(g$SOR_upCI, na.rm = T)))
 
-points(g$SOR_upCI,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$SOR_upCI,
        pch = "-",
        col = "blue")
-points(g$SOR_loCI,
+points(x = x,
+       y = g$SOR_loCI,
        pch = "-",
        col = "blue")
 
@@ -344,7 +446,8 @@ polygon(x.coo,
 
 # 5 - Convex hull area (PC1-2 only)
 
-plot(g$CH_Area_intervals,
+plot(x = x,
+     y = g$CH_Area_intervals,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -352,10 +455,16 @@ plot(g$CH_Area_intervals,
      ylim = c(min(g$loCI_CHA_intervals, na.rm = T),
               max(g$upCI_CHA_intervals, na.rm = T)))
 
-points(g$upCI_CHA_intervals,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$upCI_CHA_intervals,
        pch = "-",
        col = "blue")
-points(g$loCI_CHA_intervals,
+points(x = x,
+       y = g$loCI_CHA_intervals,
        pch = "-",
        col = "blue")
 
@@ -367,7 +476,8 @@ polygon(x.coo,
 
 # 6 - Distance of centroid to center of plot
 
-plot(g$Position,
+plot(x = x,
+     y = g$Position,
      type = "b",
      lwd = 3,
      xaxt = "n",
@@ -375,10 +485,16 @@ plot(g$Position,
      ylim = c(min(g$loCI, na.rm = T),
               max(g$upCI, na.rm = T)))
 
-points(g$upCI,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+points(x = x,
+       y = g$upCI,
        pch = "-",
        col = "blue")
-points(g$loCI,
+points(x = x,
+       y = g$loCI,
        pch = "-",
        col = "blue")
 
@@ -392,7 +508,7 @@ polygon(x.coo,
 
 par(mar = c(12, 5, 0, 5))
 
-plot(1:7, rep(0, 7), 
+plot(x, rep(0, 7), 
      type = "n",
      bty = "n",
      yaxt = "n",
@@ -401,8 +517,15 @@ plot(1:7, rep(0, 7),
      xlab = "")
 
 axis(side = 1, 
-     at = 1:7, 
-     labels = Interval, 
+     at = x.base,
+     labels = F,
+     lwd = 2)
+
+axis(side = 1, 
+     at = x, 
+     labels = Intervals,
+     tick = F,
      las = 2)
+
 
 dev.off()
