@@ -349,8 +349,8 @@ save(list = c("SOV_intervals",
               "SOV_biozones", 
               "SOR_intervals", 
               "SOR_biozones",
-              "disparity_biozones", 
-              "disparity_intervals"),
+              "disparity_conch_biozones", 
+              "disparity_conch_intervals"),
      file = "SOV_SOR_disparity_conch.RData")
 
 #-------------------------------------------------------------------------------

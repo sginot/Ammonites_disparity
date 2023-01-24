@@ -44,13 +44,15 @@ centerWS <- coo_center(cooWS)
 scaleWS <- coo_scale(centerWS) 
 
 # Find the point of the shape nearest to vertical line starting from center 
-ids <- coo_intersect_angle(scaleWS, 
-                           angle=pi/2) #May issue rgeos warnings but works
+ids <- suppressWarnings(coo_intersect_angle(scaleWS, 
+                           angle=pi/2)) 
 
 # Slide number of the coordinates so that the first point of each shape is
 # homologous (i.e. the upper "tip" of the shape, defined in vector ids)
 slideWS <- coo_slide(scaleWS, 
                      id=unlist(ids))
+
+panel(slideWS, cols = "lightgray")
 
 # Run elliptical fourier analysis with default automatic number of harmonics
 fou <- efourier(slideWS, 
@@ -60,6 +62,20 @@ fou <- efourier(slideWS,
 # Use those Fourier coefficients to produce a morphospace (by a pca)
 
 pca <- prcomp(fou$coe)
+
+plot(pca$x[,1:2], 
+     asp = 1, 
+     pch = 21, 
+     bg = "lightgray")
+# Visual inspection is necessary if script 001 has been run for
+# the first time.
+# In some cases an outlier shape may appear, due to slight noise in the 
+# interpolation of shapes causing the first landmark not to align
+# with those of the other shapes (therefore starting from an non-homologous 
+# location). 
+# If this happens, simply re-run script 001. Once outlier shape is removed, 
+# save the morphospace and load it in further analysis, rather than 
+# re-running script 001.
 
 #-------------------------------------------------------------------------------
 # Save that PCA object for loading in further scripts

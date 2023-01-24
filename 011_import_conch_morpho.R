@@ -149,6 +149,9 @@ save(list = c("table.conch",
               "Interval",
               "Biozones",
               "Stages",
+              "interval_factor",
+              "biozone_factor",
+              "stage_factor",
               "ord"),
      file = "variables_and_data_conch.RData")
 

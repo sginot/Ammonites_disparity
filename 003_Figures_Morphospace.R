@@ -17,15 +17,25 @@ load("taxa_lists_time_bins.RData")
 load("variables_and_data_whorl_sections.RData")
 
 #-------------------------------------------------------------------------------
-# Original plot: visual inspection is necessary if script 001 has been run for
-# the first time.
-# In some cases an outlier shape may appear, due to slight noise in the 
-# interpolation of shapes causing the first landmark not to align
-# with those of the other shapes (therefore starting from an non-homologous 
-# location). 
-# If this happens, simply re-run script 001. Once outlier shape is removed, 
-# save the morphospace and load it in further analysis, rather than 
-# re-running script 001.
+# Check if output directories are present, otherwise, create them.
+
+fdirs <- c('../Figures', 
+           '../Figures/PCA_biozones_names_species', 
+           '../Figures/PCA_biozones_contour',
+           '../Figures/PCA_stage_contour', 
+           '../Figures/PCA_interval_contour', 
+           '../Figures/PCA_biozone_density',
+           '../Figures/PCA_stage_density', 
+           '../Figures/PCA_interval_density', 
+           '../Figures/PCA_biozone_colors',
+           '../Figures/PCA_stage_colors', 
+           '../Figures/PCA_interval_colors')
+
+for(s in fdirs) if(!dir.exists(s)) dir.create(s)
+
+#-------------------------------------------------------------------------------
+# Visual inspection: should already have been checked at the end of script 001.
+# This plot is just to double check that no outlier is present.
 
 plot(pca$x[,1:2])
 
@@ -741,7 +751,7 @@ for (i in 1:length(Interval)) { # Number of intervals
                   plot.points = F)}, 
         # Add ellipses for each family [j] present in interval [i]
       
-      error = function(a) {print("No specimens of superfamily")})
+      error = function(a) {})
         # If family is not present in this interval, return only message
     
   }
@@ -793,7 +803,7 @@ for (i in 1:length(Interval)) {
                   center.pch = F, 
                   plot.points = F)}, 
       
-      error = function(a) {print("No specimens of family")})
+      error = function(a) {})
     
   }
   
@@ -840,7 +850,7 @@ for (i in 1:length(Interval)) {
                   center.pch = F, 
                   plot.points = F)}, 
       
-      error = function(a) {print("No specimens of family")})
+      error = function(a) {})
     
   }
   

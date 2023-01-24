@@ -12,9 +12,17 @@ library(viridis)
 #-------------------------------------------------------------------------------
 # For CONCH RATIO ANALYSES, load objects produced in script 011
 
-load("PCA_conch_ratios.RData.RData")
+load("PCA_conch_ratios.RData")
 load("taxa_lists_time_bins_conchs.RData")
 load("variables_and_data_conch.RData")
+
+#-------------------------------------------------------------------------------
+# Check that ouput directories exist, if not create them
+
+fdirs <- c("../Figures/PCA_biozones_contour/",
+           "../Figures/PCA_stage_contour/")
+
+for(s in fdirs) if(!dir.exists(s)) dir.create(s)
 
 #-------------------------------------------------------------------------------
 # Biozone level plots
@@ -159,3 +167,4 @@ for (i in 1:3){ #Stages
   #text(x=x, y=y, labels=label.species, pos=4, cex=0.5)
   dev.off()
 }
+

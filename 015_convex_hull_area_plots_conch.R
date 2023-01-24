@@ -13,6 +13,13 @@ load("convex_hull_areas_conch.RData")
 load("variables_and_data_conch.RData")
 
 #-------------------------------------------------------------------------------
+# Check that ouput directory exists, if not create it
+
+fdirs <- c("../Figures/Convex_hull_area_disparity_curve/")
+
+for(s in fdirs) if(!dir.exists(s)) dir.create(s)
+
+#-------------------------------------------------------------------------------
 # Compute the residual convex hull area, by subtracting the median of null model
 # from actual values and from null model distribution
 
@@ -50,33 +57,56 @@ res_q75_int <- q75_int - null_median_int
 res_q95_int <- q95_int - null_median_int
 
 #-------------------------------------------------------------------------------
+# Define x values with dates for intervals
+
+intervals_ages <- read.csv("intervals_dates.csv",
+                           h = T,
+                           sep= ",",
+                           dec = ".")
+
+Intervals <- rev(intervals_ages$names)
+
+middle_intervals <- intervals_ages$age_base - intervals_ages$duration / 2
+
+x <- -rev(middle_intervals)
+x.base <- -rev(intervals_ages$age_base)
+x.coo <- c(x, rev(x))
+
+#-------------------------------------------------------------------------------
 # Basic plot
+
+cols <- viridis(n = 30)
 
 output_folder <- "../Figures/Convex_hull_area_disparity_curve/"
 
 pdf(file = paste(output_folder, 
-                 "Convex_hull_area_intervals.pdf"),
+                 "Convex_hull_area_intervals_conch.pdf"),
     width = 7,
     height = 7)
 
-plot(1:7, 
+plot(x, 
      CHA_int, 
      type = "b", 
      lwd = 3, 
      pch = 19,
+     xlim = c(-404, -383),
      ylim = c(0, 50))
 
-lines(1:7,
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+lines(x,
       null_median_int,
       col = cols[1],
       lty = 2)
 
-polygon(c(1:7, 7:1), 
+polygon(c(x, rev(x)), 
         c(q5_int, rev(q95_int)), 
         col = alpha(cols[1], 
                     alpha = 0.2))
 
-polygon(c(1:7, 7:1), 
+polygon(c(x, rev(x)), 
         c(q25_int, rev(q75_int)), 
         col = alpha(cols[1], 
                     alpha = 0.2),
@@ -94,29 +124,38 @@ legend("topleft",
                   "90% envelope of null model",
                   "50% envelope of null model"))
 
+text(x = -rev(middle_intervals),
+     y = rep(-0.1, length(Intervals)),
+     labels = Intervals)
+
 dev.off()
 
 #-------------------------------------------------------------------------------
 # Residual plot
 
 pdf(file = paste(output_folder, 
-                 "Residual_Convex_hull_area_intervals.pdf"),
+                 "Residual_Convex_hull_area_intervals_conch.pdf"),
     width = 7,
     height = 7)
 
-plot(1:7, 
+plot(x, 
      res_CHA_int, 
      type = "b", 
      lwd = 3, 
      pch = 19, 
+     xlim = c(-404, -383),
      ylim = c(-20, 15))
 
-polygon(c(1:7, 7:1), 
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+polygon(c(x, rev(x)), 
         c(res_q5_int, rev(res_q95_int)), 
         col = alpha(cols[1], 
                     alpha = 0.2))
 
-polygon(c(1:7, 7:1), 
+polygon(c(x, rev(x)), 
         c(res_q25_int, rev(res_q75_int)), 
         col = alpha(cols[1], 
                     alpha = 0.2),
@@ -131,5 +170,9 @@ legend("topleft",
        legend = c("Residual convex hull area",
                   "Residual 90% envelope of null model",
                   "Residual 50% envelope of null model"))
+
+text(x = -rev(middle_intervals),
+     y = rep(-20, length(Intervals)),
+     labels = Intervals)
 
 dev.off()

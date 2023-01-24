@@ -16,6 +16,14 @@ load("convex_hull_areas.RData")
 load("SOV_SOR_disparity.RData")
 load("disparity_distances.RData")
 load("position_centroid.RData")
+load("variables_and_data_whorl_sections.RData")
+
+#-------------------------------------------------------------------------------
+# Check that ouput directory exists, if not create it
+
+fdirs <- c("../Figures/")
+
+for(s in fdirs) if(!dir.exists(s)) dir.create(s)
 
 #-------------------------------------------------------------------------------
 # Make global data frames containing data for biozones and data for intervals
@@ -529,3 +537,6 @@ axis(side = 1,
 
 
 dev.off()
+
+#-------------------------------------------------------------------------------
+# END OF SCRIPT

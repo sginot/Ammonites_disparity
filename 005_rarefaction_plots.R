@@ -10,6 +10,14 @@ library(viridis)
 load("Raref_disparity_biozone.RData")
 load("Raref_disparity_intervals.RData")
 load("variables_and_data_whorl_sections.RData")
+load("SOV_SOR_disparity.RData")
+
+#-------------------------------------------------------------------------------
+# Check if output directory is present, if not create it
+
+fdirs <- c('../Figures/Morpho_rarefaction')
+
+for(s in fdirs) if(!dir.exists(s)) dir.create(s)
 
 #-------------------------------------------------------------------------------
 # Define plotting function to be re-used with the different lists containing
