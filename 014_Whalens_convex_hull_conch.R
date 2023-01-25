@@ -54,6 +54,56 @@ for (i in 1:length(Biozones)) {
 # two observations.
 
 #-------------------------------------------------------------------------------
+# Compute null distribution of CHA for BIOZONES
+
+iter <- 10000
+# Define number of iterations of resampling and computing of pseudo-values
+
+null_CH_Area_biozones <- matrix(nrow = iter,
+                                 ncol = length(Biozones))
+
+for (it in 1:iter) {
+  
+  rand <- sample(nrow(table.conch), 
+                 replace = T)
+  # Resampled indices of individuals
+  
+  conch <- (ncol(table.conch) - 4) : ncol(table.conch)
+  # Colums containing conch ratios
+  
+  conch.rand <- table.conch[rand, conch]
+  # Randomized conch ratios
+  
+  pca.rand <- prcomp(conch.rand, 
+                     scale. = T)
+  # Randomized global morphospace
+  
+  CH_Areas <- rep(NA, length(Biozones))
+  
+  for (i in 1:length(Biozones)) {
+    
+    y <- pca.rand$x[which(biozone_factor == Biozones[i]), 2]
+    x <- pca.rand$x[which(biozone_factor == Biozones[i]), 1]
+    # Select non-randomized observations in randomized pca
+    
+    CH <- chull(x, y)
+    
+    CH_xcoo <- x[CH]
+    CH_ycoo <- y[CH]
+    
+    sp.chull <- Polygon(coords = cbind(c(CH_xcoo, CH_xcoo[1]), 
+                                       c(CH_ycoo, CH_ycoo[1])), 
+                        hole = F)
+    
+    CH_Areas[i] <- sp.chull@area
+    
+  }
+  
+  null_CH_Area_biozones[it,] <- CH_Areas
+  
+}
+
+#-------------------------------------------------------------------------------
 # Do the same for intervals
 
 CH_Area_intervals <- rep(NA, 
@@ -181,10 +231,67 @@ for (i in 1:length(Interval)) {
 }
 
 #-------------------------------------------------------------------------------
+# Bootstrapping data at biozones level
+
+bootCHA_biozones <- list()
+
+for (i in 1:length(Biozones)) {
+  
+  tryCatch({
+    
+    submorphospace <- pca$x[which(biozone_factor == Biozones[i]), ]
+    
+    CH_Areas <- rep(NA, 1000)
+    
+    for (j in 1:1000) {
+      
+      bootspace <- submorphospace[sample(nrow(submorphospace), 
+                                         replace = T),]
+      
+      x <- bootspace[, 1]
+      
+      y <- bootspace[, 2]
+      
+      CH <- chull(x, y)
+      
+      CH_xcoo <- x[CH]
+      CH_ycoo <- y[CH]
+      
+      sp.chull <- Polygon(coords = cbind(c(CH_xcoo, CH_xcoo[1]), 
+                                         c(CH_ycoo, CH_ycoo[1])), 
+                          hole = F)
+      
+      CH_Areas[j] <- sp.chull@area
+      
+    }
+    
+    bootCHA_biozones[[i]] <- CH_Areas}, 
+    
+    error = function(a) {return(NA)})
+}
+
+sbootCHA_biozones <- lapply(bootCHA_biozones, sort)
+
+upCI_CHA_biozones <- 
+  loCI_CHA_biozones <- 
+  rep(NA, length(Biozones))
+
+for (i in 1:length(Biozones)) {
+  
+  upCI_CHA_biozones[i] <- sbootCHA_biozones[[i]][975]
+  loCI_CHA_biozones[i] <- sbootCHA_biozones[[i]][25]
+  
+}
+
+#-------------------------------------------------------------------------------
 # Save objects
 
 save(list = c("CH_Area_intervals",
               "upCI_CHA_intervals",
               "loCI_CHA_intervals",
-              "null_CH_Area_intervals"),
+              "CH_Area_biozones",
+              "upCI_CHA_biozones",
+              "loCI_CHA_biozones",
+              "null_CH_Area_intervals",
+              "null_CH_Area_biozones"),
      file = "convex_hull_areas_conch.RData")

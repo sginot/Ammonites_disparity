@@ -176,3 +176,163 @@ text(x = -rev(middle_intervals),
      labels = Intervals)
 
 dev.off()
+
+
+#-------------------------------------------------------------------------------
+# Compute the residual convex hull area, by subtracting the median of null model
+# from actual values and from null model distribution
+
+null_median <- apply(null_CH_Area_biozones[,ord], 
+                     2, 
+                     median)
+
+q95 <- apply(null_CH_Area_biozones[,ord], 
+             2, 
+             quantile, 
+             probs = 0.95)
+
+q5 <- apply(null_CH_Area_biozones[,ord], 
+            2, 
+            quantile,
+            probs = 0.05)
+
+q75 <- apply(null_CH_Area_biozones[,ord], 
+             2, 
+             quantile, 
+             probs = 0.75)
+
+q25 <- apply(null_CH_Area_biozones[,ord], 
+             2, 
+             quantile,
+             probs = 0.25)
+
+CHA <- CH_Area_biozones[ord]
+
+res_CHA <- CHA - null_median
+
+res_q5 <- q5 - null_median
+res_q25 <- q25 - null_median
+res_q75 <- q75 - null_median
+res_q95 <- q95 - null_median
+
+#-------------------------------------------------------------------------------
+# Load time bin data and produce vectors to use them as x coordinates in the 
+# plots
+
+biozones_ages <- read.csv("biozones_dates.csv",
+                          h = T,
+                          sep= ",",
+                          dec = ".")
+
+middle_biozones <- biozones_ages$age_base - biozones_ages$duration / 2
+
+x <- -rev(middle_biozones)
+x.base <- -rev(biozones_ages$age_base)
+x.coo <- c(x, rev(x))
+# For simplification purposes
+
+#-------------------------------------------------------------------------------
+# Basic plot
+
+cols <- viridis(n = 30)
+
+output_folder <- "../Figures/Convex_hull_area_disparity_curve/"
+# Define output folder containing figures.
+
+pdf(file = paste(output_folder, 
+                 "Convex_hull_area_biozones_conch.pdf"),
+    width = 7,
+    height = 7)
+# Create image pdf file amd set the size of plotting area
+
+plot(x, 
+     CHA, 
+     type = "b", 
+     lwd = 3, 
+     pch = 19, 
+     ylim = c(-2, max(q95)),
+     xlab = "Time (Mya)")
+# Plot measured values for convex hull area
+
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+lines(x,
+      null_median,
+      col = cols[1],
+      lty = 2)
+# Add median of the null model inspired from Whalen's et al paper
+
+polygon(c(x, rev(x)), 
+        c(q5, rev(q95)), 
+        col = alpha(cols[1], 
+                    alpha = 0.2))
+# Add colored area upper and lower bound are defined as 5 and 95 percentiles 
+
+polygon(c(x, rev(x)), 
+        c(q25, rev(q75)), 
+        col = alpha(cols[1], 
+                    alpha = 0.2),
+        border = NA)
+# Add colored area upper and lower bound are defined as 25 and 75 percentiles 
+
+legend("bottomright",
+       lty = c(1, 2, 1, 1),
+       col = c("black", 
+                      "black", 
+                      alpha(cols[1], alpha = 0.2),
+                      alpha(cols[1], alpha = 0.4)),
+       lwd = c(3, 1, 3, 3),
+       legend = c("Measured convex hull area",
+                  "Median convex hull area of null model",
+                  "90% envelope of null model",
+                  "50% envelope of null model"))
+
+dev.off()
+
+#-------------------------------------------------------------------------------
+# Residual convex hull area plot
+
+pdf(file = paste(output_folder, 
+                 "Residual_convex_hull_area_biozones_conch.pdf"),
+    width = 7,
+    height = 7)
+
+plot(x, 
+     res_CHA, 
+     type = "b", 
+     lwd = 3, 
+     pch = 19, 
+     ylim = c(min(res_CHA), max(res_q95)),
+     xlab = "Time (Mya)")
+
+abline(v = x.base, 
+       lty = 2,
+       col = "gray")
+
+polygon(c(x, rev(x)), 
+        c(res_q5, rev(res_q95)), 
+        col = alpha(cols[1], 
+                    alpha = 0.2))
+
+polygon(c(x, rev(x)), 
+        c(res_q25, rev(res_q75)), 
+        col = alpha(cols[1], 
+                    alpha = 0.2),
+        border = NA)
+
+legend("bottomleft",
+       lty = c(1, 1, 1),
+       col = c("black",
+                      alpha(cols[1], alpha = 0.2),
+                      alpha(cols[1], alpha = 0.4)),
+       lwd = c(3, 3, 3),
+       legend = c("Residual convex hull area",
+                  "Residual 90% envelope of null model",
+                  "Residual 50% envelope of null model"))
+
+dev.off()
+
+#-------------------------------------------------------------------------------
+# END OF SCRIPT
