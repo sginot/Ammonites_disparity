@@ -117,6 +117,9 @@ save(list = ls(pattern = "list."),
      file = "taxa_lists_time_bins.RData")
 
 save(list = c("table.aperture", 
+              "interval_factor",
+              "biozone_factor",
+              "stage_factor",
               "Species", 
               "Superfam", 
               "Ap.Image", 

@@ -16,6 +16,7 @@ load("convex_hull_areas_conch.RData")
 load("SOV_SOR_disparity_conch.RData")
 load("disparity_distances_conch.RData")
 load("position_centroid_conch.RData")
+load("variables_and_data_conch.RData")
 
 #-------------------------------------------------------------------------------
 # Make global data frames containing data for intervals
