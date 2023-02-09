@@ -26,8 +26,7 @@ for (i in 1:length(Biozones)) {
   tryCatch({
     # tryCatch avoids the loop from stopping when there are not enough points
     
-    submorphospace <- pca$x[match(list.taxa.biozones[[i]], 
-                                  levels(Ap.Image)),]
+    submorphospace <- pca$x[which(biozone_factor == Biozones[i]),]
     # Select data to compute index: all species present in biozone [i] x
     # all PCs
     
@@ -104,8 +103,7 @@ for (i in 1:length(Biozones)) {
     # tryCatch avoids the loop from crashing when there are not enough points
     # to compute ranges or variances
     
-    submorphospace <- pca$x[match(list.taxa.biozones[[i]], 
-                                  levels(Ap.Image)),]
+    submorphospace <- pca$x[which(biozone_factor == Biozones[i]),]
     # Data frame containing data for all species present in biozone [i]
     
     bootmID <- rep(NA, 1000)
