@@ -78,7 +78,7 @@ mat[which(is.na(mat))] <- 0
 
 pdf(paste(output_folder,
           "Partial_disparity_interval_whorl.pdf",
-          ""))
+          sep = ""))
 
 barplot(mat, 
         ylab = "SOV",
@@ -107,7 +107,7 @@ dev.off()
 # Do the same thing at the biozones level 
 
 
-bizones_ages <- read.csv("biozones_dates.csv",
+biozones_ages <- read.csv("biozones_dates.csv",
                          h = T,
                          sep= ",",
                          dec = ".")

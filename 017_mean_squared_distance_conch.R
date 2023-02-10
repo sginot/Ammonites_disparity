@@ -48,7 +48,7 @@ for (i in 1:length(Biozones)) {
     
     mID_biozones[i] <- mID
     
-    cdist_biozones[i] <- mean(cdist^2)},
+    cdist_biozones[i] <- mean(cdist)},
     # Mean squared distance to centroid
     
     error = function(a) {return(NA)})
@@ -81,7 +81,7 @@ for (i in 1:length(Interval)) {
 
     mID_intervals[i] <- mID
     
-    cdist_intervals[i] <- mean(cdist^2)},
+    cdist_intervals[i] <- mean(cdist)},
     
     
     error = function(a) {return(NA)})
@@ -135,7 +135,7 @@ for (i in 1:length(Biozones)) {
       
       bootmID[j] <- mID
       
-      bootcdist[j] <- mean(cdist^2)
+      bootcdist[j] <- mean(cdist)
       # Mean squared distance to centroid
       
     }
@@ -205,7 +205,7 @@ for (i in 1:length(Interval)) {
       
       bootmID[j] <- mID
       
-      bootcdist[j] <- mean(cdist^2)
+      bootcdist[j] <- mean(cdist)
       
     }
     

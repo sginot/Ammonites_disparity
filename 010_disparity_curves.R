@@ -130,14 +130,14 @@ polygon(x.coo,
         border = NA,
         col = alpha("blue", alpha = 0.2))
      
-# 2 - Mean squared distance to centroid (all PCs)
+# 2 - Mean distance to centroid (all PCs)
 
 plot(x = x,
      y = g$Centroid_dist,
      type = "b",
      lwd = 3,
      xaxt = "n",
-     ylab = "Squared distance to centroid",
+     ylab = "Distance to centroid",
      ylim = c(min(g$loCI_cdist, na.rm = T),
               max(g$upCI_cdist, na.rm = T)))
 
@@ -360,14 +360,14 @@ polygon(x.coo,
         border = NA,
         col = alpha("blue", alpha = 0.2))
 
-# 2 - Mean squared distance to centroid (all PCs)
+# 2 - Mean distance to centroid (all PCs)
 
 plot(x = x,
      y = g$Centroid_dist,
      type = "b",
      lwd = 3,
      xaxt = "n",
-     ylab = "Squared distance to centroid",
+     ylab = "Distance to centroid",
      ylim = c(min(g$loCI_cdist, na.rm = T),
               max(g$upCI_cdist, na.rm = T)))
 
